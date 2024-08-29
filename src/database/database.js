@@ -1,9 +1,20 @@
+const fs = require('fs')
 const path = require('path')
 const config = require('../config')
 const sqlite = require("sqlite3").verbose()
-const db = new sqlite.Database(
-  path.join(__dirname, '../', config.dbFile)
-)
+
+const dbFilePath = path.join(__dirname, '../', config.dbFile);
+const dbDir = path.dirname(dbFilePath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+const db = new sqlite.Database(dbFilePath, (err) => {
+  if (err) {
+    console.error('Erro ao abrir o banco de dados:', err.message);
+  } else {
+    console.log('Conectado ao banco de dados SQLite.');
+  }
+});
 
 const createTables = async () => {
 
